@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RiverScout - GenAI Analysis</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+    }
+    .navbar {
+      background-color: #4f8a8b;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .navbar .project-name {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .navbar .logo img {
+      height: 45px;
+    }
+    .container-fluid {
+      padding: 0;
+    }
+    .sidebar {
+      background-color: #eef2f5;
+      min-height: 100vh;
+      padding-top: 2rem;
+      border-right: 1px solid #dce0e5;
+    }
+    .sidebar a {
+      color: #3b3b3b;
+      text-decoration: none;
+      display: block;
+      padding: 0.75rem 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 0.6rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background-color: #d4e9ed;
+      color: #2c7a7b;
+    }
+    .main-content {
+      padding: 3rem 2rem;
+      background-color: #ffffff;
+      min-height: 100vh;
+    }
+    .main-content h1, .main-content h2, .main-content h3 {
+      color: #333;
+    }
+    .spinner-wrapper {
+      text-align: center;
+      padding: 50px;
+    }
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar d-flex justify-content-between align-items-center">
+    <div class="project-name">RiverScout</div>
+    <div class="logo">
+      <img src="app/static/rvlogo.jpg" alt="Logo">
+    </div>
+  </nav>
+
+  <!-- Sidebar and Main Content Area -->
+  <div class="container-fluid">
+    <div class="row g-0">
+      <nav class="col-md-2 sidebar d-flex flex-column align-items-start">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('map_view') }}">Map View</a>
+        <a href="/genai">GenAI Analysis</a>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col-md-10 main-content">
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="spinner-wrapper">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p>Analyzing river data with GenAI... Please wait.</p>
+        </div>
+
+        <!-- Analysis Results -->
+        <div id="analysis-result" class="analysis-box" style="display:none;">
+          <h4>🧠 GenAI Insights:</h4>
+          <div id="analysis-content"></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript to Fetch GenAI Analysis -->
+  <script>
+    // Fetch GenAI analysis
+    async function fetchGenAIAnalysis() {
+      try {
+        const response = await fetch('/get_genai_analysis');
+        if (response.ok) {
+          const analysisHtml = await response.text();
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('analysis-result').style.display = 'block';
+          document.getElementById('analysis-content').innerHTML = analysisHtml;
+        } else {
+          throw new Error('Failed to fetch analysis');
+        }
+      } catch (error) {
+        document.getElementById('loading').innerHTML = '<p>Error fetching GenAI analysis. Please try again later.</p>';
+      }
+    }
+
+    // Call the function to fetch GenAI analysis once the page loads
+    window.onload = function() {
+      fetchGenAIAnalysis();
+    };
+  </script>
+
+</body>
+</html>
+
+
