@@ -33,6 +33,7 @@ Recommended Remedies (4 bullet points)
 Use formal and professional language.
 Maintain clarity and conciseness.
 Strictly do not mix causes with remedies.
+add more
 Sensor Data Provided:
 pH: {latest_data['ph']}
 Turbidity: {latest_data['turbidity']}
