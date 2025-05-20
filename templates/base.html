@@ -61,6 +61,7 @@
     .main-content h1, .main-content h2, .main-content h3 {
       color: #333;
     }
+    
   </style>
 </head>
 
@@ -76,8 +77,10 @@
     <div class="row g-0">
       <nav class="col-md-2 sidebar d-flex flex-column align-items-start">
         <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('analytics_page') }}">Graphical Analysis</a>
         <a href="{{ url_for('map_view') }}">Map View</a>
-        <a href="{{ url_for('genai_analysis') }}">GenAI Analysis</a>
+        <a href="{{ url_for('get_genai_analysis') }}">GenAI Analysis</a>
       </nav>
 
       <main class="col-md-10 main-content">

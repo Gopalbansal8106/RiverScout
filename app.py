@@ -114,12 +114,18 @@ def map_view():
     except Exception as e:
         return f"Error loading map: {str(e)}"
 
-# ---- CHANGES START HERE ----
 
-# Serve genai.html with spinner and JavaScript
+
 @app.route('/genai', methods=['GET'])
 def genai_page():
     return render_template('genai.html')
+
+@app.route('/analytics', methods=['GET'])
+def analytics_page():
+    return render_template('analytics.html')
+
+
+
 
 # Separate API route for slow GenAI work
 @app.route('/get_genai_analysis', methods=['GET'])
@@ -145,9 +151,6 @@ def get_genai_analysis():
     except Exception as e:
         return f"Error in GenAI analysis: {str(e)}"
 
-# ---- CHANGES END HERE ----
-
 if __name__ == '__main__':
     init_db()
     socketio.run(app, debug=True, host='0.0.0.0')
-

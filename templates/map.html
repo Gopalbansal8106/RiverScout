@@ -123,7 +123,8 @@
       <nav class="col-md-2 sidebar d-flex flex-column align-items-start">
         <a href="/">Home</a>
         <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        <a href="/map" class="active">Map View</a>
+        <a href="{{ url_for('analytics_page') }}">Graphical Analysis</a>
+        <a href="/map">Map View</a>
         <a href="/genai">GenAI Analysis</a>
       </nav>
 

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Sensor Analytics</h2>
+<ul class="nav nav-tabs" id="analyticsTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="temp-tab" data-bs-toggle="tab" data-bs-target="#temp" type="button" role="tab">vs Outside Temperature</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="humidity-tab" data-bs-toggle="tab" data-bs-target="#humidity" type="button" role="tab">vs Outside Humidity</button>
+  </li>
+</ul>
+
+<div class="tab-content mt-4">
+  <!-- Temperature tab -->
+  <div class="tab-pane fade show active" id="temp" role="tabpanel">
+    <div class="mb-5"><canvas id="phTempChart" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="turbidityTempChart" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="tdsTempChart" height="100"></canvas></div>
+  </div>
+
+  <!-- Humidity tab -->
+  <div class="tab-pane fade" id="humidity" role="tabpanel">
+    <div class="mb-5"><canvas id="phHumidityChart" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="turbidityHumidityChart" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="tdsHumidityChart" height="100"></canvas></div>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Socket.IO -->
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+
+<script>
+  const socket = io();
+  let charts = [];
+
+  function createScatter(ctxId, xData, yData, title, xLabel, yLabel, pointColor) {
+    const ctx = document.getElementById(ctxId).getContext('2d');
+    const dataPoints = xData.map((x, i) => ({ x: x, y: yData[i] }));
+    return new Chart(ctx, {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: title,
+          data: dataPoints,
+          backgroundColor: pointColor,
+          pointRadius: 5
+        }]
+      },
+      options: {
+        plugins: { title: { display: true, text: title } },
+        scales: {
+          x: { title: { display: true, text: xLabel } },
+          y: { title: { display: true, text: yLabel } }
+        }
+      }
+    });
+  }
+
+  function fetchAndPlot() {
+    fetch('/data')
+      .then(res => res.json())
+      .then(rows => {
+        const tempAir = rows.map(r => r[9]);
+        const humAir = rows.map(r => r[10]);
+        const ph = rows.map(r => r[4]);
+        const turbidity = rows.map(r => r[5]);
+        const tds = rows.map(r => r[7]);
+
+        // Destroy existing charts
+        charts.forEach(chart => chart.destroy());
+        charts = [];
+
+        // Temperature comparisons
+        charts.push(createScatter('phTempChart', tempAir, ph, 'pH vs Temperature', 'Temperature (°C)', 'pH', '#4e79a7'));
+        charts.push(createScatter('turbidityTempChart', tempAir, turbidity, 'Turbidity vs Temperature', 'Temperature (°C)', 'Turbidity', '#f28e2b'));
+        charts.push(createScatter('tdsTempChart', tempAir, tds, 'TDS vs Temperature', 'Temperature (°C)', 'TDS', '#e15759'));
+
+        // Humidity comparisons
+        charts.push(createScatter('phHumidityChart', humAir, ph, 'pH vs Humidity', 'Humidity (%)', 'pH', '#76b7b2'));
+        charts.push(createScatter('turbidityHumidityChart', humAir, turbidity, 'Turbidity vs Humidity', 'Humidity (%)', 'Turbidity', '#59a14f'));
+        charts.push(createScatter('tdsHumidityChart', humAir, tds, 'TDS vs Humidity', 'Humidity (%)', 'TDS', '#edc949'));
+      });
+  }
+
+  fetchAndPlot();
+  socket.on('new_data', fetchAndPlot);
+</script>
+{% endblock %}
+
+
