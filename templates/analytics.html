@@ -8,6 +8,9 @@
   <li class="nav-item" role="presentation">
     <button class="nav-link" id="humidity-tab" data-bs-toggle="tab" data-bs-target="#humidity" type="button" role="tab">vs Outside Humidity</button>
   </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="pie-tab" data-bs-toggle="tab" data-bs-target="#pie" type="button" role="tab">Pollution Contribution</button>
+  </li>
 </ul>
 
 <div class="tab-content mt-4">
@@ -24,6 +27,11 @@
     <div class="mb-5"><canvas id="turbidityHumidityChart" height="100"></canvas></div>
     <div class="mb-5"><canvas id="tdsHumidityChart" height="100"></canvas></div>
   </div>
+
+  <!-- Pie chart tab -->
+  <div class="tab-pane fade" id="pie" role="tabpanel">
+    <div class="mb-5" style="height: 500px; width: 500px;"><canvas id="pollutionPieChart" height="120"></canvas></div>
+  </div>
 </div>
 
 <!-- Chart.js -->
@@ -34,6 +42,7 @@
 <script>
   const socket = io();
   let charts = [];
+  let pieChart;
 
   function createScatter(ctxId, xData, yData, title, xLabel, yLabel, pointColor) {
     const ctx = document.getElementById(ctxId).getContext('2d');
@@ -58,6 +67,67 @@
     });
   }
 
+  function calculatePollutionContribution(latest) {
+    const values = {
+      ph: latest[4],
+      turbidity: latest[5],
+      tds: latest[7],
+      gas: latest[8]
+    };
+
+    const safeRanges = {
+      ph: [6.5, 8.5],
+      turbidity: [0, 5],
+      tds: [0, 500],
+      gas: [0, 300]
+    };
+
+    const deviations = {};
+
+    for (const [key, val] of Object.entries(values)) {
+      const [min, max] = safeRanges[key];
+      if (val < min) deviations[key] = (min - val) / min;
+      else if (val > max) deviations[key] = (val - max) / max;
+    }
+
+    if (Object.keys(deviations).length === 0) {
+      return { labels: ['Safe'], data: [100], colors: ['#28a745'] };
+    }
+
+    const total = Object.values(deviations).reduce((sum, d) => sum + d, 0);
+    const labels = Object.keys(deviations);
+    const data = labels.map(k => (deviations[k] / total) * 100);
+    const colors = ['#d62728', '#ff7f0e', '#1f77b4', '#9467bd'];
+
+    return { labels, data, colors: colors.slice(0, labels.length) };
+  }
+
+  function updatePieChart(latestRow) {
+    const { labels, data, colors } = calculatePollutionContribution(latestRow);
+    const ctx = document.getElementById('pollutionPieChart').getContext('2d');
+
+    if (pieChart) pieChart.destroy();
+
+    pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: colors
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Pollution Contribution (%)'
+          }
+        }
+      }
+    });
+  }
+
   function fetchAndPlot() {
     fetch('/data')
       .then(res => res.json())
@@ -68,19 +138,19 @@
         const turbidity = rows.map(r => r[5]);
         const tds = rows.map(r => r[7]);
 
-        // Destroy existing charts
         charts.forEach(chart => chart.destroy());
         charts = [];
 
-        // Temperature comparisons
         charts.push(createScatter('phTempChart', tempAir, ph, 'pH vs Temperature', 'Temperature (°C)', 'pH', '#4e79a7'));
         charts.push(createScatter('turbidityTempChart', tempAir, turbidity, 'Turbidity vs Temperature', 'Temperature (°C)', 'Turbidity', '#f28e2b'));
         charts.push(createScatter('tdsTempChart', tempAir, tds, 'TDS vs Temperature', 'Temperature (°C)', 'TDS', '#e15759'));
 
-        // Humidity comparisons
         charts.push(createScatter('phHumidityChart', humAir, ph, 'pH vs Humidity', 'Humidity (%)', 'pH', '#76b7b2'));
         charts.push(createScatter('turbidityHumidityChart', humAir, turbidity, 'Turbidity vs Humidity', 'Humidity (%)', 'Turbidity', '#59a14f'));
         charts.push(createScatter('tdsHumidityChart', humAir, tds, 'TDS vs Humidity', 'Humidity (%)', 'TDS', '#edc949'));
+
+        // Update Pie Chart with latest data row
+        updatePieChart(rows[rows.length - 1]);
       });
   }
 
@@ -88,5 +158,3 @@
   socket.on('new_data', fetchAndPlot);
 </script>
 {% endblock %}
-
-

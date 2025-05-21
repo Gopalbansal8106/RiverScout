@@ -124,6 +124,10 @@ def genai_page():
 def analytics_page():
     return render_template('analytics.html')
 
+@app.route('/about_us', methods=['GET'])
+def about_us_page():
+    return render_template('about_us.html')
+
 
 
 
