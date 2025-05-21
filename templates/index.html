@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>RiverScout | Home</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
+
     <style>
       /* Custom Colors */
       .bg-primary {
@@ -46,30 +46,40 @@
         font-size: 1rem;
         color: #666666;
       }
+
+      .logo img {
+        height: 45px;
+      }
     </style>
 </head>
 
 <body class="bg-primary-50 min-h-screen flex flex-col">
-    <header class="bg-primary text-white py-6 shadow-md">
-        <h1 class="text-3xl font-bold text-center">RiverScout</h1>
-        <p class="text-center text-primary-light mt-2">Real-Time River Health Monitoring</p>
+    <header class="bg-primary text-white py-6 shadow-md relative">
+      <div class="container mx-auto px-6 relative flex justify-center">
+    <!-- Centered Text -->
+      <div class="text-center">
+      <h1 class="text-3xl font-bold">RiverScout</h1>
+      <p class="text-primary-light mt-1">Real-Time River Health Monitoring</p>
+      </div>
+
+    <!-- Right-aligned Logo -->
+      <div class="absolute right-6 top-1/2 transform -translate-y-1/2">
+      <img src="static/rvlogo.jpg" alt="Logo" style="height: 45px;">
+      </div>
+      </div>
     </header>
+
 
     <main class="flex-grow flex flex-col items-center justify-center p-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mt-8">
-
             <a href="/dashboard" class="tile">
-              <h2 class="tile-title">Dashboard</h2>
-              <p class="tile-desc">View the real time value of sensors deployed on the riverscout.</p>
+                <h2 class="tile-title">Dashboard</h2>
+                <p class="tile-desc">View the real time value of sensors deployed on the riverscout.</p>
             </a>
-
-            
-
             <a href="/analytics" class="tile">
                 <h2 class="tile-title">Graphical Analysis</h2>
                 <p class="tile-desc">Visualize pH, turbidity, temperature, and more over time.</p>
             </a>
-
             <a href="/genai" class="tile">
                 <h2 class="tile-title">GenAI Insights</h2>
                 <p class="tile-desc">Analyze data using AI and get smart suggestions and warnings.</p>
@@ -78,11 +88,10 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl mt-8">
             <a href="/map" class="tile">
-              <h2 class="tile-title">Live Map</h2>
-              <p class="tile-desc">Track capsule location and view water quality alerts in real-time.</p>
+                <h2 class="tile-title">Live Map</h2>
+                <p class="tile-desc">Track capsule location and view water quality alerts in real-time.</p>
             </a>
-
-            <a href="/about" class="tile">
+            <a href="/about_us" class="tile">
                 <h2 class="tile-title">About Us</h2>
                 <p class="tile-desc">Learn more about RiverScout and our mission.</p>
             </a>
@@ -94,6 +103,3 @@
     </main>
 </body>
 </html>
-
-
-

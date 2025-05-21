@@ -5,7 +5,7 @@ from database import init_db, insert_data, fetch_all_data, fetch_map_data
 import json
 import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyBP4ThpGB9BNfEZGp_4IcOYafRXcxuP6Q4")
+genai.configure(api_key="AIzaSyDw_wapfQipkIViQ32QG-tp6fPfXctY6FE")
 model = genai.GenerativeModel('gemini-1.5-pro')
 
 def analyze_latest_data_with_gemini(latest_data):
@@ -123,6 +123,10 @@ def genai_page():
 @app.route('/analytics', methods=['GET'])
 def analytics_page():
     return render_template('analytics.html')
+
+@app.route('/about_us', methods=['GET'])
+def about_us_page():
+    return render_template('about_us.html')
 
 
 
