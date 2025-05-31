@@ -5,8 +5,8 @@ from database import init_db, insert_data, fetch_all_data, fetch_map_data
 import json
 import google.generativeai as genai
 
-genai.configure(api_key="AIzaSyDw_wapfQipkIViQ32QG-tp6fPfXctY6FE")
-model = genai.GenerativeModel('gemini-1.5-pro')
+genai.configure(api_key="AIzaSyD0rtwvNT0qF5-a9mVjh64xHTGzk3KYX2g")
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 def analyze_latest_data_with_gemini(latest_data):
     prompt = f"""
