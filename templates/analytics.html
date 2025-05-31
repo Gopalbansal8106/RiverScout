@@ -9,6 +9,9 @@
     <button class="nav-link" id="humidity-tab" data-bs-toggle="tab" data-bs-target="#humidity" type="button" role="tab">vs Outside Humidity</button>
   </li>
   <li class="nav-item" role="presentation">
+    <button class="nav-link" id="correlation-tab" data-bs-toggle="tab" data-bs-target="#correlation" type="button" role="tab">Sensor Correlation</button>
+  </li>
+  <li class="nav-item" role="presentation">
     <button class="nav-link" id="pie-tab" data-bs-toggle="tab" data-bs-target="#pie" type="button" role="tab">Pollution Contribution</button>
   </li>
 </ul>
@@ -28,15 +31,23 @@
     <div class="mb-5"><canvas id="tdsHumidityChart" height="100"></canvas></div>
   </div>
 
+  <!-- Sensor Correlation tab -->
+  <div class="tab-pane fade" id="correlation" role="tabpanel">
+    <div class="mb-5"><canvas id="phVsTurbidity" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="phVsTDS" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="turbidityVsTDS" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="tdsVsPH" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="turbidityVsPH" height="100"></canvas></div>
+    <div class="mb-5"><canvas id="tdsVsTurbidity" height="100"></canvas></div>
+  </div>
+
   <!-- Pie chart tab -->
   <div class="tab-pane fade" id="pie" role="tabpanel">
     <div class="mb-5" style="height: 500px; width: 500px;"><canvas id="pollutionPieChart" height="120"></canvas></div>
   </div>
 </div>
 
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Socket.IO -->
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 
 <script>
@@ -71,19 +82,16 @@
     const values = {
       ph: latest[4],
       turbidity: latest[5],
-      tds: latest[7],
-      gas: latest[8]
+      tds: latest[7]
     };
 
     const safeRanges = {
       ph: [6.5, 8.5],
       turbidity: [0, 5],
-      tds: [0, 500],
-      gas: [0, 300]
+      tds: [0, 500]
     };
 
     const deviations = {};
-
     for (const [key, val] of Object.entries(values)) {
       const [min, max] = safeRanges[key];
       if (val < min) deviations[key] = (min - val) / min;
@@ -97,7 +105,7 @@
     const total = Object.values(deviations).reduce((sum, d) => sum + d, 0);
     const labels = Object.keys(deviations);
     const data = labels.map(k => (deviations[k] / total) * 100);
-    const colors = ['#d62728', '#ff7f0e', '#1f77b4', '#9467bd'];
+    const colors = ['#d62728', '#ff7f0e', '#1f77b4'];
 
     return { labels, data, colors: colors.slice(0, labels.length) };
   }
@@ -107,7 +115,6 @@
     const ctx = document.getElementById('pollutionPieChart').getContext('2d');
 
     if (pieChart) pieChart.destroy();
-
     pieChart = new Chart(ctx, {
       type: 'pie',
       data: {
@@ -141,6 +148,7 @@
         charts.forEach(chart => chart.destroy());
         charts = [];
 
+        // Outside Temp and Humidity vs Sensors
         charts.push(createScatter('phTempChart', tempAir, ph, 'pH vs Temperature', 'Temperature (°C)', 'pH', '#4e79a7'));
         charts.push(createScatter('turbidityTempChart', tempAir, turbidity, 'Turbidity vs Temperature', 'Temperature (°C)', 'Turbidity', '#f28e2b'));
         charts.push(createScatter('tdsTempChart', tempAir, tds, 'TDS vs Temperature', 'Temperature (°C)', 'TDS', '#e15759'));
@@ -149,7 +157,14 @@
         charts.push(createScatter('turbidityHumidityChart', humAir, turbidity, 'Turbidity vs Humidity', 'Humidity (%)', 'Turbidity', '#59a14f'));
         charts.push(createScatter('tdsHumidityChart', humAir, tds, 'TDS vs Humidity', 'Humidity (%)', 'TDS', '#edc949'));
 
-        // Update Pie Chart with latest data row
+        // Sensor-to-sensor correlations
+        charts.push(createScatter('phVsTurbidity', ph, turbidity, 'pH vs Turbidity', 'pH', 'Turbidity', '#ff6384'));
+        charts.push(createScatter('phVsTDS', ph, tds, 'pH vs TDS', 'pH', 'TDS', '#36a2eb'));
+        charts.push(createScatter('turbidityVsTDS', turbidity, tds, 'Turbidity vs TDS', 'Turbidity', 'TDS', '#9966cc'));
+        charts.push(createScatter('tdsVsPH', tds, ph, 'TDS vs pH', 'TDS', 'pH', '#ff9f40'));
+        charts.push(createScatter('turbidityVsPH', turbidity, ph, 'Turbidity vs pH', 'Turbidity', 'pH', '#c9cbcf'));
+        charts.push(createScatter('tdsVsTurbidity', tds, turbidity, 'TDS vs Turbidity', 'TDS', 'Turbidity', '#2ca02c'));
+
         updatePieChart(rows[rows.length - 1]);
       });
   }
@@ -158,3 +173,4 @@
   socket.on('new_data', fetchAndPlot);
 </script>
 {% endblock %}
+

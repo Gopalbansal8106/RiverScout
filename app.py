@@ -6,7 +6,7 @@ import json
 import google.generativeai as genai
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
-model = genai.GenerativeModel('gemini-1.5-pro')
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 def analyze_latest_data_with_gemini(latest_data):
     prompt = f"""
