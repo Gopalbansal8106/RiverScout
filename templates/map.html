@@ -6,11 +6,7 @@
 
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -80,7 +76,7 @@
 
     .map-container {
       display: flex;
-      height: calc(100vh - 10rem); /* Adjust depending on navbar and header height */
+      height: calc(100vh - 10rem);
       gap: 1rem;
     }
 
@@ -100,6 +96,7 @@
       font-size: 14px;
       line-height: 1.6;
       height: fit-content;
+      color: #333;
     }
 
     .legend div {
@@ -109,7 +106,6 @@
 </head>
 
 <body>
-  <!-- Navbar -->
   <nav class="navbar d-flex justify-content-between align-items-center">
     <div class="project-name">RiverScout</div>
     <div class="logo">
@@ -119,7 +115,6 @@
 
   <div class="container-fluid">
     <div class="row g-0">
-      <!-- Sidebar -->
       <nav class="col-md-2 sidebar d-flex flex-column align-items-start">
         <a href="/">Home</a>
         <a href="{{ url_for('dashboard') }}">Dashboard</a>
@@ -129,7 +124,6 @@
         <a href="/about_us">About Us</a>
       </nav>
 
-      <!-- Main content -->
       <main class="col-md-10 main-content position-relative">
         <h2>RiverScout - Live Monitoring</h2>
 
@@ -137,19 +131,17 @@
           <div id="map"></div>
           <div class="legend d-flex flex-column">
             <div><strong>Labels:</strong></div>
-            <div>🟢 Normal water</div><br>
-            <div>🔵 High pH</div><br>
-            <div>🟠 High Turbidity</div><br>
-            <div>🟡 High Temperature</div><br>
-            <div>🟣 High Gas</div><br>
-            <div>🔴 Multiple Issues</div><br>
+            <div style="color: green;">🟢 Normal water</div>
+            <div style="color: blue;">🔵 Abnormal pH</div>
+            <div style="color: orange;">🟠 Abnormal Turbidity</div>
+            <div style="color: goldenrod;">🟡 Abnormal Temperature</div>
+            <div style="color: red;">🔴 Multiple Issues</div>
           </div>
         </div>
       </main>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -165,34 +157,30 @@
       let path = L.polyline([], {color: 'blue'}).addTo(map);
 
       const thresholds = {
-        ph: 8,
-        turbidity: 100,
-        temperature_water: 30,
-        gas: 300
+        ph: [6.5, 8.5],
+        turbidity: [0, 100],
+        temperature_water: [5, 30]
       };
 
       const colors = {
         normal: 'green',
         ph: 'blue',
         turbidity: 'orange',
-        temperature_water: 'yellow',
-        gas: 'purple',
+        temperature_water: 'goldenrod',
         multiple: 'red'
       };
 
       function addMarker(lat, lng, data) {
         let issues = [];
-        if (data.ph > thresholds.ph) issues.push('High pH');
-        if (data.turbidity > thresholds.turbidity) issues.push('High Turbidity');
-        if (data.temperature_water > thresholds.temperature_water) issues.push('High Water Temperature');
-        if (data.gas > thresholds.gas) issues.push('High Gas Levels');
+        if (data.ph < thresholds.ph[0] || data.ph > thresholds.ph[1]) issues.push('Abnormal pH');
+        if (data.turbidity < thresholds.turbidity[0] || data.turbidity > thresholds.turbidity[1]) issues.push('Abnormal Turbidity');
+        if (data.temperature_water < thresholds.temperature_water[0] || data.temperature_water > thresholds.temperature_water[1]) issues.push('Abnormal Temperature');
 
         let color = colors.normal;
         if (issues.length === 1) {
           if (issues[0].includes('pH')) color = colors.ph;
           if (issues[0].includes('Turbidity')) color = colors.turbidity;
           if (issues[0].includes('Temperature')) color = colors.temperature_water;
-          if (issues[0].includes('Gas')) color = colors.gas;
         } else if (issues.length > 1) {
           color = colors.multiple;
         }
@@ -204,6 +192,12 @@
         }).addTo(map);
 
         let popupContent = `<strong>Timestamp:</strong> ${data.timestamp || 'N/A'}<br>`;
+        popupContent += `<strong>pH:</strong> ${data.ph}<br>`;
+        popupContent += `<strong>Turbidity:</strong> ${data.turbidity}<br>`;
+        popupContent += `<strong>Water Temp:</strong> ${data.temperature_water} °C<br>`;
+        popupContent += `<strong>TDS:</strong> ${data.tds || 'N/A'}<br>`;
+        popupContent += `<strong>Air Temp:</strong> ${data.temperature_air || 'N/A'} °C<br>`;
+        popupContent += `<strong>Humidity:</strong> ${data.humidity_air || 'N/A'} %<br>`;
         popupContent += issues.length > 0 ? `<strong>Issues:</strong> ${issues.join(', ')}` : `<strong>Status:</strong> Normal Water`;
 
         marker.bindPopup(popupContent);
@@ -212,13 +206,11 @@
         map.setView([lat, lng], 15);
       }
 
-      // Load initial data
       const sensorData = {{ sensor_data|safe }};
       sensorData.forEach(entry => {
         addMarker(entry.latitude, entry.longitude, entry);
       });
 
-      // Real-time update
       const socket = io();
       socket.on('new_data', () => {
         fetch('/data')
@@ -231,20 +223,19 @@
                 ph: last[4],
                 turbidity: last[5],
                 temperature_water: last[6],
-                gas: last[7]
+                tds: last[7],
+                temperature_air: last[8],
+                humidity_air: last[9],
               });
             }
           })
           .catch(error => console.error('Error fetching updated data:', error));
       });
 
-      // Fix map resizing issues
       setTimeout(() => {
         map.invalidateSize();
       }, 300);
     });
   </script>
-
 </body>
 </html>
-
