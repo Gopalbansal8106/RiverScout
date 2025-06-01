@@ -13,7 +13,6 @@ def init_db():
                     turbidity REAL,
                     temperature_water REAL,
                     tds REAL,
-                    gas REAL,
                     temperature_air REAL,
                     humidity_air REAL
                 )''')
@@ -23,11 +22,11 @@ def init_db():
 def insert_data(data):
     conn = sqlite3.connect('river_data.db')
     c = conn.cursor()
-    c.execute('''INSERT INTO sensor_data (timestamp, latitude, longitude, ph, turbidity, temperature_water, tds, gas, temperature_air, humidity_air)
+    c.execute('''INSERT INTO sensor_data (timestamp, latitude, longitude, ph, turbidity, temperature_water, tds, temperature_air, humidity_air)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
               (datetime.now().isoformat(), data['latitude'], data['longitude'], data['ph'],
                data['turbidity'], data['temperature_water'], data['tds'],
-               data['gas'], data['temperature_air'], data['humidity_air']))
+                data['temperature_air'], data['humidity_air']))
     conn.commit()
     conn.close()
 
@@ -42,11 +41,13 @@ def fetch_all_data():
 def fetch_map_data():
     conn = sqlite3.connect('river_data.db')
     c = conn.cursor()
-    c.execute('''SELECT latitude, longitude, timestamp, temperature_water, ph, turbidity, gas 
+    c.execute('''SELECT latitude, longitude, timestamp, ph, turbidity, temperature_water, tds, temperature_air, humidity_air
                  FROM sensor_data''')
     coords = c.fetchall()
     conn.close()
     return coords
+
+
 
 
 

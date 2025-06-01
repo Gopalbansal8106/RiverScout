@@ -36,9 +36,7 @@
     <div class="mb-5"><canvas id="phVsTurbidity" height="100"></canvas></div>
     <div class="mb-5"><canvas id="phVsTDS" height="100"></canvas></div>
     <div class="mb-5"><canvas id="turbidityVsTDS" height="100"></canvas></div>
-    <div class="mb-5"><canvas id="tdsVsPH" height="100"></canvas></div>
-    <div class="mb-5"><canvas id="turbidityVsPH" height="100"></canvas></div>
-    <div class="mb-5"><canvas id="tdsVsTurbidity" height="100"></canvas></div>
+    
   </div>
 
   <!-- Pie chart tab -->
@@ -139,8 +137,8 @@
     fetch('/data')
       .then(res => res.json())
       .then(rows => {
-        const tempAir = rows.map(r => r[9]);
-        const humAir = rows.map(r => r[10]);
+        const tempAir = rows.map(r => r[8]);
+        const humAir = rows.map(r => r[9]);
         const ph = rows.map(r => r[4]);
         const turbidity = rows.map(r => r[5]);
         const tds = rows.map(r => r[7]);
@@ -161,10 +159,7 @@
         charts.push(createScatter('phVsTurbidity', ph, turbidity, 'pH vs Turbidity', 'pH', 'Turbidity', '#ff6384'));
         charts.push(createScatter('phVsTDS', ph, tds, 'pH vs TDS', 'pH', 'TDS', '#36a2eb'));
         charts.push(createScatter('turbidityVsTDS', turbidity, tds, 'Turbidity vs TDS', 'Turbidity', 'TDS', '#9966cc'));
-        charts.push(createScatter('tdsVsPH', tds, ph, 'TDS vs pH', 'TDS', 'pH', '#ff9f40'));
-        charts.push(createScatter('turbidityVsPH', turbidity, ph, 'Turbidity vs pH', 'Turbidity', 'pH', '#c9cbcf'));
-        charts.push(createScatter('tdsVsTurbidity', tds, turbidity, 'TDS vs Turbidity', 'TDS', 'Turbidity', '#2ca02c'));
-
+        
         updatePieChart(rows[rows.length - 1]);
       });
   }

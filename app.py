@@ -69,8 +69,8 @@ def get_latest_data():
             'turbidity': latest_row[5],
             'temperature_water': latest_row[6],
             'tds': latest_row[7],
-            'temperature_air': latest_row[9],
-            'humidity_air': latest_row[10],
+            'temperature_air': latest_row[8],
+            'humidity_air': latest_row[9]
         }
         return jsonify(latest_data)
     except Exception as e:
@@ -103,10 +103,13 @@ def map_view():
                 "latitude": row[0],
                 "longitude": row[1],
                 "timestamp": row[2],
-                "temperature_water": row[3],
-                "ph": row[4],
-                "turbidity": row[5],
-                "gas": row[6]
+                "ph": row[3],
+                "turbidity": row[4],
+                "temperature_water": row[5],
+                "tds": row[6],
+                "temperature_air": row[7],
+                "humidity_air": row[8]
+                
             }
             for row in coords
         ]
@@ -145,8 +148,8 @@ def get_genai_analysis():
             'turbidity': latest_row[5],
             'temperature_water': latest_row[6],
             'tds': latest_row[7],
-            'temperature_air': latest_row[9],
-            'humidity_air': latest_row[10],
+            'temperature_air': latest_row[8],
+            'humidity_air': latest_row[9],
         }
 
         analysis_result = analyze_latest_data_with_gemini(latest_data)
