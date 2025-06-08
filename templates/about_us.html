@@ -1,5 +1,127 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>About us</h1>
+<div class="container">
+  <h1 class="mb-4">About Us</h1>
+  <p class="lead">Welcome to <strong>RiverScout</strong> – your intelligent river health monitoring companion.</p>
+
+  <p><strong>RiverScout</strong> is a real-time river monitoring system that not only collects essential water quality data through a physical prototype but also empowers users with intelligent insights and visualizations.</p>
+
+  <p>Our hardware prototype is equipped with environmental sensors that measure turbidity, pH, total dissolved solids (TDS), water and ambient temperature, and environmental humidity. This data is sent to the RiverScout platform for advanced analysis.</p>
+
+  <h3 class="mt-5">Key Features</h3>
+  <ul>
+    <li>📡 <strong>Real-Time Data Collection</strong> from rivers using a working physical prototype</li>
+    <li>📊 <strong>Graphical Analysis</strong> for trends and patterns</li>
+    <li>🗺️ <strong>Map Visualizations</strong> to understand geographical data impact</li>
+    <li>🧠 <strong>GenAI-Based Responses</strong> that interpret data and offer actionable insights</li>
+    <li>🌐 <strong>Interactive Dashboard</strong> for easy data access and monitoring</li>
+  </ul>
+
+  <h3 class="mt-5">Our Vision</h3>
+  <p>We aim to revolutionize how environmental data is collected — making river monitoring smarter, accessible, and actionable. By integrating IoT with AI, we support government bodies, NGOs, and communities in making data-driven decisions for water resource protection.</p>
+
+  <h3 class="mt-5">Our Team - The Innovative Crew</h3>
+  <p>We are a team of 1st year engineering students from RV College of Engineering. We are passionate technologists and environmental advocates working on innovative solutions that combine hardware, software, and AI to solve real-world challenges.</p>
+
+  <div class="row mt-4">
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card team-card h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title text-primary fw-bold">Gopal Bansal</h5>
+          <p class="card-text">Industrial Engineering and Management</p>
+          <p class="card-text"><a href="mailto:gopalbansal.im24@rvce.edu.in">Gopal Bansal - Email</a></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card team-card h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title text-primary fw-bold">Avyav Saraf</h5>
+          <p class="card-text">Information Science and Engineering</p>
+          <p class="card-text"><a href="mailto:avyavsaraf.is24@rvce.edu.in">Avyav Saraf - Email</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card team-card h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title text-primary fw-bold">Krish Chhapolia</h5>
+          <p class="card-text">Industrial Engineering and Management</p>
+          <p class="card-text"><a href="mailto:krishchhapolia.im24@rvce.edu.in">Krish Chhapolia - Email</a></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card team-card h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title text-primary fw-bold">Rachit Mittal</h5>
+          <p class="card-text">Computer Science and Engineering (AIML)</p>
+          <p class="card-text"><a href="mailto:rachitmittal.ci24@rvce.edu.in">Rachit Mittal - Email</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<footer class="footer mt-auto py-3 bg-transparent">
+  <div class="text-center text-gray-600 small">
+    Made with 💧 by <strong>RiverScout Team</strong>
+  </div>
+</footer>
+
+ 
+  <!-- <h3 class="mt-5">Contact Us</h3>
+  <p>Have questions or want to collaborate? Reach out to us:</p>
+  <ul>
+    <li>Email: <a href="mailto:team@riverscout.org">team@riverscout.org</a></li>
+    <li>Phone: +91-9876543210</li>
+    <li>Location: Delhi NCR, India</li>
+  </ul> -->
+</div>
+
+<!-- Hover Highlight Styling -->
+<style>
+  .team-card {
+    background-color: #f8fdfd; /* Light bluish background */
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 22, 43, 0.5);
+    background-color: #e0f8f8;
+  }
+
+  .team-card .card-title {
+    color: #1b6b6b;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .team-card .card-text a {
+    color: #1b6b6b;
+    text-decoration: none;
+  }
+
+  .team-card .card-text a:hover {
+    text-decoration: underline;
+  }
+
+    .footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+    padding-bottom: 1rem;
+  } 
+</style>
+
 {% endblock %}
