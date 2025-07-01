@@ -66,11 +66,11 @@ void loop() {
 
     float pH = -0.02 * phRaw + 22.3;
     float turbidity = 0.002111832 * turbidityRaw * turbidityRaw - 3.16399 * turbidityRaw + 1159.576;
-    float tds = -0.0009 * tdsRaw * tdsRaw + 2.4957 * tdsRaw - 52.0340;
+    float tds = 2.0155 * tdsRaw;
 
     // === GPS Data ===
-    float latitude = 0.0;
-    float longitude = 0.0;
+    float latitude =  12.923647758185743;
+    float longitude = 77.50039711125889 ;
     int satCount = 0;
     float speed = 0;
     float altitude = 0;
