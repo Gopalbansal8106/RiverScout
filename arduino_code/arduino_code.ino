@@ -64,8 +64,8 @@ void loop() {
     int tdsRaw = analogRead(TDS_PIN);
 
 
-    float pH = -0.02 * phRaw + 22.3;
-    float turbidity = 0.002111832 * turbidityRaw * turbidityRaw - 3.16399 * turbidityRaw + 1159.576;
+    float pH = -0.02 * phRaw + 20.3;
+    float turbidity = 0.022 * turbidityRaw - 8.5;
     float tds = 2.0155 * tdsRaw;
 
     // === GPS Data ===

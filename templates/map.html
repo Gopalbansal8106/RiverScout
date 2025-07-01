@@ -135,6 +135,7 @@
             <div style="color: blue;">🔵 Abnormal pH</div>
             <div style="color: orange;">🟠 Abnormal Turbidity</div>
             <div style="color: goldenrod;">🟡 Abnormal Temperature</div>
+            <div style="color: purple;">🟣 Abnormal TDS</div>
             <div style="color: red;">🔴 Multiple Issues</div>
           </div>
         </div>
@@ -154,12 +155,13 @@
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
 
-      let path = L.polyline([], {color: 'blue'}).addTo(map);
+      let path = L.polyline([], { color: 'blue' }).addTo(map);
 
       const thresholds = {
         ph: [6.5, 8.5],
         turbidity: [0, 100],
-        temperature_water: [5, 30]
+        temperature_water: [5, 30],
+        tds: [0, 500]  // Update this range as per your requirement
       };
 
       const colors = {
@@ -167,20 +169,24 @@
         ph: 'blue',
         turbidity: 'orange',
         temperature_water: 'goldenrod',
+        tds: 'purple',
         multiple: 'red'
       };
 
       function addMarker(lat, lng, data) {
         let issues = [];
+
         if (data.ph < thresholds.ph[0] || data.ph > thresholds.ph[1]) issues.push('Abnormal pH');
         if (data.turbidity < thresholds.turbidity[0] || data.turbidity > thresholds.turbidity[1]) issues.push('Abnormal Turbidity');
         if (data.temperature_water < thresholds.temperature_water[0] || data.temperature_water > thresholds.temperature_water[1]) issues.push('Abnormal Temperature');
+        if (data.tds < thresholds.tds[0] || data.tds > thresholds.tds[1]) issues.push('Abnormal TDS');
 
         let color = colors.normal;
         if (issues.length === 1) {
           if (issues[0].includes('pH')) color = colors.ph;
           if (issues[0].includes('Turbidity')) color = colors.turbidity;
           if (issues[0].includes('Temperature')) color = colors.temperature_water;
+          if (issues[0].includes('TDS')) color = colors.tds;
         } else if (issues.length > 1) {
           color = colors.multiple;
         }
@@ -203,7 +209,7 @@
         marker.bindPopup(popupContent);
 
         path.addLatLng([lat, lng]);
-        map.setView([lat, lng], 15);
+
       }
 
       const sensorData = {{ sensor_data|safe }};
