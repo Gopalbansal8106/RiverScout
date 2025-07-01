@@ -22,11 +22,22 @@ def init_db():
 def insert_data(data):
     conn = sqlite3.connect('river_data.db')
     c = conn.cursor()
-    c.execute('''INSERT INTO sensor_data (timestamp, latitude, longitude, ph, turbidity, temperature_water, tds, temperature_air, humidity_air)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-              (datetime.now().isoformat(), data['latitude'], data['longitude'], data['ph'],
-               data['turbidity'], data['temperature_water'], data['tds'],
-                data['temperature_air'], data['humidity_air']))
+    c.execute('''INSERT INTO sensor_data (
+    timestamp, latitude, longitude, ph, turbidity,
+    temperature_water, tds, temperature_air, humidity_air)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+    (
+        datetime.now().isoformat(),
+        float(data['latitude']),
+        float(data['longitude']),
+        float(data['ph']),
+        float(data['turbidity']),
+        float(data['temperature_water']),
+        float(data['tds']),
+        float(data['temperature_air']),
+        float(data['humidity_air'])
+    ))
+
     conn.commit()
     conn.close()
 
