@@ -7,7 +7,7 @@ const char* ssid = "gopal";
 const char* password = "gopal8106";
 
 // Flask server
-const char* server = "http://192.168.172.65:5000/upload"; // Change IP if needed
+const char* server = "http://192.168.73.65:5000/upload"; // Change IP if needed
 
 // Arduino Serial on UART1
 #define ARDUINO_RX 16
@@ -16,7 +16,7 @@ HardwareSerial arduinoSerial(1);
 
 // === Add these for 15-second delay ===
 unsigned long lastSendTime = 0;
-const unsigned long sendInterval = 15000; // 15 seconds
+const unsigned long sendInterval = 8000; // 8 seconds
 String latestDataLine = "";
 
 void setup() {
