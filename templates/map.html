@@ -155,13 +155,11 @@
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
 
-      let path = L.polyline([], { color: 'blue' }).addTo(map);
-
       const thresholds = {
         ph: [6.5, 8.5],
         turbidity: [0, 100],
         temperature_water: [5, 30],
-        tds: [0, 500]  // Update this range as per your requirement
+        tds: [0, 500]
       };
 
       const colors = {
@@ -172,6 +170,9 @@
         tds: 'purple',
         multiple: 'red'
       };
+
+      const pathCoordinates = [];
+      let path = L.polyline([], { color: 'blue' }).addTo(map);
 
       function addMarker(lat, lng, data) {
         let issues = [];
@@ -208,8 +209,9 @@
 
         marker.bindPopup(popupContent);
 
-        path.addLatLng([lat, lng]);
-
+        // Add point to path and redraw
+        pathCoordinates.push([lat, lng]);
+        path.setLatLngs(pathCoordinates);
       }
 
       const sensorData = {{ sensor_data|safe }};
@@ -237,6 +239,15 @@
           })
           .catch(error => console.error('Error fetching updated data:', error));
       });
+
+      let bounds = [];
+      sensorData.forEach(entry => {
+        bounds.push([entry.latitude, entry.longitude]);
+      });
+
+      if (bounds.length > 0) {
+        map.fitBounds(bounds, { maxZoom: 13 });
+      }
 
       setTimeout(() => {
         map.invalidateSize();

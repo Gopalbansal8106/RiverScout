@@ -4,8 +4,7 @@
 <h2 class="mb-4 fw-bold">Dashboard</h2>
 
 <div class="row g-4">
-
-  <!-- Tile Template -->
+  <!-- Sensor Tiles -->
   <div class="col-md-4">
     <div class="card custom-tile">
       <div class="card-body">
@@ -65,10 +64,16 @@
       </div>
     </div>
   </div>
+</div>
 
+<!-- Last updated status -->
+<div id="last-updated" class="text-muted text-center mt-4" style="font-size: 0.9rem;">
+  Last updated: --
 </div>
 
 <script>
+  let lastUpdateTimestamp = Date.now();
+
   function fetchLatestData() {
     fetch('/get_latest_data')
       .then(response => response.json())
@@ -80,6 +85,10 @@
           document.getElementById('tds_value').innerText = data.tds !== null ? data.tds.toFixed(2) + ' ppm' : '--';
           document.getElementById('air_temp_value').innerText = data.temperature_air !== null ? data.temperature_air.toFixed(2) + ' °C' : '--';
           document.getElementById('humidity_value').innerText = data.humidity_air !== null ? data.humidity_air.toFixed(2) + ' %' : '--';
+
+          // update timestamp
+          lastUpdateTimestamp = Date.now();
+          document.getElementById('last-updated').innerText = "Last updated: just now";
         }
       })
       .catch(error => {
@@ -87,8 +96,20 @@
       });
   }
 
+  // Initial fetch
   fetchLatestData();
-  setInterval(fetchLatestData, 5000);
+
+  // Fetch every 8 seconds
+  setInterval(fetchLatestData, 8000);
+
+  // Update "seconds ago" every 1 second
+  setInterval(() => {
+    const secondsAgo = Math.floor((Date.now() - lastUpdateTimestamp) / 1000);
+    if (secondsAgo > 0) {
+      document.getElementById('last-updated').innerText =
+        `Last updated: ${secondsAgo} second${secondsAgo !== 1 ? 's' : ''} ago`;
+    }
+  }, 1000);
 </script>
 {% endblock %}
 
@@ -128,4 +149,3 @@
   }
 </style>
 {% endblock %}
-

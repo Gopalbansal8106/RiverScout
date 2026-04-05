@@ -62,10 +62,13 @@ void loop() {
     int phRaw = analogRead(PH_PIN);
     int turbidityRaw = analogRead(TURBIDITY_PIN);
     int tdsRaw = analogRead(TDS_PIN);
-
+    Serial.println(turbidityRaw);
 
     float pH = -0.02 * phRaw + 20.3;
-    float turbidity = 0.022 * turbidityRaw - 8.5;
+    float turbidity = 1.222 * (turbidityRaw-490);
+    if(turbidity<0) turbidity = 0.27;
+
+
     float tds = 2.0155 * tdsRaw;
 
     // === GPS Data ===
