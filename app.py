@@ -1,14 +1,26 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, request, jsonify, render_template
 from flask_socketio import SocketIO, emit
 import markdown2
 from database import init_db, insert_data, fetch_all_data, fetch_map_data
 import json
-import google.generativeai as genai
+from groq import Groq
 
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
-model = genai.GenerativeModel('gemini-1.5-flash')
+# Load API key from environment variable (set GROQ_API_KEY before running)
+groq_api_key = os.environ.get("GROQ_API_KEY", "")
+if groq_api_key:
+    groq_client = Groq(api_key=groq_api_key)
+else:
+    groq_client = None
+    print("[WARNING] GROQ_API_KEY not set. GenAI analysis will be unavailable.")
 
 def analyze_latest_data_with_gemini(latest_data):
+    if groq_client is None:
+        return "**GenAI analysis unavailable.** Set the `GROQ_API_KEY` environment variable and restart the server."
+
     prompt = f"""
     Analyze the provided river water sensor dataset and identify any abnormalities or potential risks based on key parameters such as pH, turbidity, TDS, water temperature, air temperature, and humidity. Confirm the absence of abnormalities if all parameters are within safe ranges. Only proceed with further instructions if abnormalities are detected.
 Important Conditions:
@@ -33,7 +45,6 @@ Recommended Remedies (4 bullet points)
 Use formal and professional language.
 Maintain clarity and conciseness.
 Strictly do not mix causes with remedies.
-add more
 Sensor Data Provided:
 pH: {latest_data['ph']}
 Turbidity: {latest_data['turbidity']}
@@ -42,8 +53,13 @@ TDS: {latest_data['tds']}
 Air Temperature: {latest_data['temperature_air']}
 Air Humidity: {latest_data['humidity_air']}"""
 
-    response = model.generate_content(prompt)
-    return response.text
+    response = groq_client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.7,
+        max_tokens=1024
+    )
+    return response.choices[0].message.content
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -160,4 +176,4 @@ def get_genai_analysis():
 
 if __name__ == '__main__':
     init_db()
-    socketio.run(app, debug=True, host='0.0.0.0')
+    socketio.run(app, debug=True, host='0.0.0.0', allow_unsafe_werkzeug=True)

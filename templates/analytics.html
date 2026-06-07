@@ -44,7 +44,9 @@
     <div class="mb-5" style="height: 500px; width: 500px;"><canvas id="pollutionPieChart" height="120"></canvas></div>
   </div>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 
@@ -168,4 +170,3 @@
   socket.on('new_data', fetchAndPlot);
 </script>
 {% endblock %}
-

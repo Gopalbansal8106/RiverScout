@@ -1,5 +1,40 @@
 {% extends "base.html" %}
 
+{% block head %}
+<style>
+  .text-gradient {
+    background: linear-gradient(45deg, #00796b, #004d40);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .team-card {
+    border: none;
+    border-radius: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #ffffff;
+  }
+
+  .team-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .team-card .card-title {
+    color: #00695c;
+  }
+
+  .team-card .card-text a {
+    color: #00796b;
+    text-decoration: none;
+  }
+
+  .team-card .card-text a:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container">
   <div class="text-center mb-3">
@@ -34,19 +69,17 @@ We envision a future where real-time insights drive policy and conservation effo
   <h3 class="mt-5 text-gradient">Our Team - The Innovative Crew</h3>
   <p class="mb-4">We are a team of 1st year engineering students from RV College of Engineering. We are passionate technologists and environmental advocates working on innovative solutions that combine hardware, software, and AI to solve real-world challenges.</p>
 
-  <div class="row mt-4">
+  <div class="row mt-4 justify-content-center">
     {% for member in [
-      {'name': 'Gopal Bansal', 'branch': 'Industrial Engineering and Management', 'email': 'gopalbansal.im24@rvce.edu.in'},
-      {'name': 'Avyav Saraf', 'branch': 'Information Science and Engineering', 'email': 'avyavsaraf.is24@rvce.edu.in'},
-      {'name': 'Krish Chhapolia', 'branch': 'Industrial Engineering and Management', 'email': 'krishchhapolia.im24@rvce.edu.in'},
-      {'name': 'Rachit Mittal', 'branch': 'Computer Science and Engineering (AIML)', 'email': 'rachitmittal.ci24@rvce.edu.in'}
+      {'name': 'Gopal Bansal', 'branch': 'Electronics and Telecommunication Engineering'},
+      {'name': 'Inaya J Gujaran', 'branch': 'Electronics and Telecommunication Engineering'},
+      {'name': 'Rohan KG', 'branch': 'Electronics and Telecommunication Engineering'}
     ] %}
-    <div class="col-md-6 col-lg-3 mb-4">
+    <div class="col-md-6 col-lg-4 mb-4">
       <div class="card team-card h-100 shadow-lg">
         <div class="card-body text-center">
           <h5 class="card-title text-primary fw-bold">{{ member.name }}</h5>
           <p class="card-text">{{ member.branch }}</p>
-          <p class="card-text"><a href="mailto:{{ member.email }}">{{ member.name }} - Email</a></p>
         </div>
       </div>
     </div>
@@ -59,42 +92,4 @@ We envision a future where real-time insights drive policy and conservation effo
     </div>
   </footer>
 </div>
-
-<!-- Custom Styling -->
-<style>
-  body {
-    background: linear-gradient(to bottom right, #e0f7fa, #f0fdfa);
-  }
-
-  .text-gradient {
-    background: linear-gradient(45deg, #00796b, #004d40);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .team-card {
-    border: none;
-    border-radius: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #ffffff;
-  }
-
-  .team-card:hover {
-    transform: translateY(-7px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  }
-
-  .team-card .card-title {
-    color: #00695c;
-  }
-
-  .team-card .card-text a {
-    color: #00796b;
-    text-decoration: none;
-  }
-
-  .team-card .card-text a:hover {
-    text-decoration: underline;
-  }
-</style>
 {% endblock %}
